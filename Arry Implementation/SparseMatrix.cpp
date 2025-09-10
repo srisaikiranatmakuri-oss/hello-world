@@ -2,64 +2,66 @@
 using namespace std;
 
 
-struct Element {
-    int rIndex, cIndex, data;
-    Element* link;
-
-    Element(int r, int c, int val) {
-        rIndex = r;
-        cIndex = c;
-        data = val;
-        link = nullptr;
-    }
+struct Node {
+    int r, c, data;
 };
 
-
-class MatrixLL {
+class SparseArray {
 private:
-    Element* start;
+    int totalRows, totalCols, nonZeroCount;
+    Node* arr;
 
 public:
-    MatrixLL() {
-        start = nullptr;
+  
+    SparseArray(int rows, int cols, int count) {
+        totalRows = rows;
+        totalCols = cols;
+        nonZeroCount = count;
+        arr = new Node[nonZeroCount];
     }
 
    
-    void addNode(int r, int c, int val) {
-        if (val == 0) return;  // ignore zeros
-        Element* node = new Element(r, c, val);
+    ~SparseArray() {
+        delete[] arr;
+    }
 
-        if (!start) {
-            start = node;
-        } else {
-            Element* temp = start;
-            while (temp->link) temp = temp->link;
-            temp->link = node;
+   
+    void inputValues() {
+        cout << "Enter row, column, value for " << nonZeroCount << " elements:\n";
+        for (int i = 0; i < nonZeroCount; i++) {
+            cin >> arr[i].r >> arr[i].c >> arr[i].data;
         }
     }
 
    
     void printMatrix() {
-        Element* ptr = start;
-        cout << "Row | Col | Value\n";
-        cout << "-----------------\n";
-        while (ptr) {
-            cout << ptr->rIndex << "   | " << ptr->cIndex << "   | " << ptr->data << endl;
-            ptr = ptr->link;
+        int index = 0;
+        for (int i = 0; i < totalRows; i++) {
+            for (int j = 0; j < totalCols; j++) {
+                if (index < nonZeroCount && arr[index].r == i && arr[index].c == j) {
+                    cout << arr[index].data << " ";
+                    index++;
+                } else {
+                    cout << "0 ";
+                }
+            }
+            cout << endl;
         }
     }
 };
 
 int main() {
-    MatrixLL matrix;
+    int m, n, k;
+    cout << "How many rows and columns do you want: ";
+    cin >> m >> n;
 
-   
-    matrix.addNode(0, 1, 7);
-    matrix.addNode(1, 3, 15);
-    matrix.addNode(2, 2, 9);
-    matrix.addNode(4, 0, 11);
+    cout << "Enter overall non-zero elements: ";
+    cin >> k;
 
-    cout << "Sparse Matrix (Linked List Form):\n";
+    SparseArray matrix(m, n, k);
+    matrix.inputValues();
+
+    cout << "\nMatrix form:\n";
     matrix.printMatrix();
 
     return 0;
