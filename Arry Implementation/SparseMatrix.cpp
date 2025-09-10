@@ -1,65 +1,66 @@
 #include <iostream>
 using namespace std;
 
-// Node to store non-zero elements
-struct Node {
-    int row, col, value;
-    Node* next;
-    
-    Node(int r, int c, int v) {
-        row = r;
-        col = c;
-        value = v;
-        next = nullptr;
+
+struct Element {
+    int rIndex, cIndex, data;
+    Element* link;
+
+    Element(int r, int c, int val) {
+        rIndex = r;
+        cIndex = c;
+        data = val;
+        link = nullptr;
     }
 };
 
-// Sparse Matrix 
-class SparseMatrix {
+
+class MatrixLL {
 private:
-    Node* head;
+    Element* start;
 
 public:
-    SparseMatrix() {
-        head = nullptr;
+    MatrixLL() {
+        start = nullptr;
     }
 
-    // Insert  non-zero value into the sparse matrix
-    void insert(int r, int c, int v) {
-        if (v == 0) return; 
-        Node* newNode = new Node(r, c, v);
+   
+    void addNode(int r, int c, int val) {
+        if (val == 0) return;  // ignore zeros
+        Element* node = new Element(r, c, val);
 
-        if (!head) {
-            head = newNode;
+        if (!start) {
+            start = node;
         } else {
-            Node* temp = head;
-            while (temp->next) temp = temp->next;
-            temp->next = newNode;
+            Element* temp = start;
+            while (temp->link) temp = temp->link;
+            temp->link = node;
         }
     }
 
-    // Display elements
-    void display() {
-        Node* temp = head;
-        cout << "Row  Col  Value\n";
-        while (temp) {
-            cout << temp->row << "    " << temp->col << "    " << temp->value << endl;
-            temp = temp->next;
+   
+    void printMatrix() {
+        Element* ptr = start;
+        cout << "Row | Col | Value\n";
+        cout << "-----------------\n";
+        while (ptr) {
+            cout << ptr->rIndex << "   | " << ptr->cIndex << "   | " << ptr->data << endl;
+            ptr = ptr->link;
         }
     }
 };
 
 int main() {
-    SparseMatrix sm;
+    MatrixLL matrix;
 
-    // Example: Insert non-zero elements
-    sm.insert(0, 0, 5);
-    sm.insert(0, 3, 8);
-    sm.insert(1, 1, 3);
-    sm.insert(3, 2, 6);
+   
+    matrix.addNode(0, 1, 7);
+    matrix.addNode(1, 3, 15);
+    matrix.addNode(2, 2, 9);
+    matrix.addNode(4, 0, 11);
 
-    cout << "Sparse Matrix Representation (Linked List):\n";
-    sm.display();
+    cout << "Sparse Matrix (Linked List Form):\n";
+    matrix.printMatrix();
 
     return 0;
 }
