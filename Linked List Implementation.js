@@ -1,64 +1,102 @@
 #include <iostream>
 using namespace std;
 
-// Node structure for non-zero elements
-struct Node {
-    int row, col, value;
-    Node* next;
-    Node(int r, int c, int v) {
-        row = r;
-        col = c;
-        value = v;
-        next = nullptr;
-    }
+struct Element 
+{
+    int row;
+    int col;
+    int value;
+    Element* next;
 };
 
-// Sparse Matrix implemented with Linked List
-class SparseMatrix {
+class SparseMatrix 
+{
 private:
-    Node* head;
+    int totalRows;
+    int totalCols;
+    Element* head;
 
 public:
-    SparseMatrix() {
+    SparseMatrix(int rows, int cols) {
+        totalRows = rows;
+        totalCols = cols;
         head = nullptr;
     }
 
-    // Insert a non-zero value
-    void insert(int r, int c, int v) {
-        if (v == 0) return; // Skip zero values
-        Node* newNode = new Node(r, c, v);
-
-        if (!head) {
+    void addElement(int r, int c, int val) 
+    {
+        if (r < 0 || r >= totalRows || c < 0 || c >= totalCols) 
+        {
+            cout << "Invalid position (" << r << "," << c << "). Skipping this element.\n";
+            return;
+        }
+        Element* newNode = new Element{r, c, val, nullptr};
+        if (!head) 
+        {
             head = newNode;
-        } else {
-            Node* temp = head;
+        } else 
+        {
+            Element* temp = head;
             while (temp->next) temp = temp->next;
             temp->next = newNode;
         }
     }
 
-    // Display stored sparse matrix elements
-    void display() {
-        Node* temp = head;
-        cout << "Row  Col  Value\n";
-        while (temp) {
-            cout << temp->row << "    " << temp->col << "    " << temp->value << endl;
-            temp = temp->next;
+    void displayMatrix() 
+    {
+        Element* temp = head;
+        for (int i = 0; i < totalRows; i++) 
+        {
+            for (int j = 0; j < totalCols; j++) 
+            {
+                if (temp && temp->row == i && temp->col == j) 
+                {
+                    cout << temp->value << " ";
+                    temp = temp->next;
+                } else 
+                {
+                    cout << "0 ";
+                }
+            }
+            cout << endl;
         }
     }
 };
 
-int main() {
-    SparseMatrix sm;
+int main() 
+{
+    int rows, cols, nonZero;
 
-    // Example insertions (non-zero elements)
-    sm.insert(0, 0, 10);
-    sm.insert(0, 2, 5);
-    sm.insert(1, 1, 8);
-    sm.insert(3, 2, 12);
+    cout << "Enter number of rows and columns: ";
+    if (!(cin >> rows >> cols) || rows <= 0 || cols <= 0) 
+    {
+        cout << "Invalid matrix size.\n";
+        return 1;
+    }
 
-    cout << "Sparse Matrix (Linked List Representation):\n";
-    sm.display();
+    cout << "Enter number of non-zero elements: ";
+    if (!(cin >> nonZero) || nonZero < 0) 
+    {
+        cout << "Invalid number of non-zero elements.\n";
+        return 1;
+    }
+
+    SparseMatrix matrix(rows, cols);
+
+    for (int i = 0; i < nonZero; i++) 
+    {
+        int r, c, val;
+        cout << "Enter row, column, value for element " << i + 1 << ": ";
+        if (!(cin >> r >> c >> val)) 
+        {
+            cout << "Invalid input. Exiting.\n";
+            return 1;
+        }
+        matrix.addElement(r, c, val);
+    }
+
+    cout << "\nMatrix form:\n";
+    matrix.displayMatrix();
 
     return 0;
 }
